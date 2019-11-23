@@ -1,6 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
+/*.db
+/uploads
+!/uploads/.keep
 /dist
 /tmp
 /out-tsc

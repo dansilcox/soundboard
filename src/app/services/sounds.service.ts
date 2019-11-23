@@ -71,7 +71,7 @@ export class SoundsService {
 
   play(sound: Sound): void {
     const audio = new Audio();
-    audio.src = sound.filepath;
+    audio.src =  '../' + sound.filepath;
     audio.load();
     audio.play();
     this.audioPlaying.push(audio);
