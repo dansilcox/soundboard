@@ -26,4 +26,22 @@ export class ConfigComponent implements OnInit {
     }
     this._sounds.delete(sound);
   }
+
+  playSound(sound: Sound): void {
+    event.preventDefault();
+
+    this._sounds.play(sound);
+  }
+
+  isPlaying(sound: Sound): boolean {
+    event.preventDefault();
+
+    return this._sounds.isPlaying(sound);
+  }
+
+  stopSound(sound: Sound): void {
+    event.preventDefault();
+
+    this._sounds.fadeOut(sound, 0);
+  }
 }

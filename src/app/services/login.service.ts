@@ -7,6 +7,7 @@ export class LoginService {
 
   constructor() { }
 
+  // TODO: implement actual login check if required...
   loggedIn(): boolean {
     return true;
   }

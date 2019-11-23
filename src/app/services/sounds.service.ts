@@ -1,8 +1,11 @@
+declare var AudioContext, webkitAudioContext: any; // ADDED
+
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Sound } from '../models/sound';
 import { IpcRendererService } from './ipc-renderer.service';
 import { MessagesService } from './messages.service';
+import { AudioWrapper } from '../models/audio-wrapper';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +14,7 @@ export class SoundsService {
   private sounds: Sound[] = [];
   private sounds$ = new BehaviorSubject<Sound[]>(this.sounds);
 
-  private audioPlaying: HTMLAudioElement[] = [];
+  private audioPlaying: AudioWrapper[] = [];
 
   constructor(private _ipc: IpcRendererService, private _msg: MessagesService) { 
     this._ipc.on('pong', () => console.info('Backend connection OK'));
@@ -74,11 +77,45 @@ export class SoundsService {
     audio.src =  '../' + sound.filepath;
     audio.load();
     audio.play();
-    this.audioPlaying.push(audio);
+    this.audioPlaying.push({id: sound.id, audioElement: audio});
+  }
+
+  isPlaying(sound: Sound): boolean {
+    return !!this.audioPlaying.find((x) => x.id === sound.id);
+  }
+
+  fadeOut(sound: Sound, fadeTimeSeconds: number = 2): void {
+    const selectedAudio = this.audioPlaying.find((x) => x.id === sound.id);
+    if (!selectedAudio) {
+      this._msg.warning('Unable to fade out currently playing sound ' + sound.title);
+      return;
+    }
+
+    // create audio context
+    const _AudioContext = AudioContext || webkitAudioContext;
+    const audioCtx = new _AudioContext();
+
+    // Create a MediaElementAudioSourceNode
+    // Feed the HTMLMediaElement into it
+    const source = audioCtx.createMediaElementSource(selectedAudio.audioElement);
+
+    const gainNode = audioCtx.createGain();
+
+    // connect the AudioBufferSourceNode to the gainNode
+    // and the gainNode to the destination
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    // go down to 0.01 first (for the fade) then pause audio altogether
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + fadeTimeSeconds);
+    setTimeout(() => selectedAudio.audioElement.pause(), fadeTimeSeconds * 1000);
+
+    this.audioPlaying.splice(this.audioPlaying.findIndex((x) => x === selectedAudio), 1);
   }
 
   stopAllAudio(): void {
-    this._msg.info('Stopping all audio...');
-    this.audioPlaying.forEach((x: HTMLAudioElement) => x.pause());
+    this.audioPlaying.forEach((value) => value.audioElement.pause());
+    // If audio is playing only in the SoundsService is it really playing...?
+    this.audioPlaying = [];
   }
 }

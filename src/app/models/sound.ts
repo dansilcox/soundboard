@@ -6,4 +6,5 @@ export class Sound {
   public file?: File;
   public filepath?: string;
   public fileContents?: string;
+  public length?: number;
 }

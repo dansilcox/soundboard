@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IpcRenderer } from 'electron';
+import { MessagesService } from './messages.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { IpcRenderer } from 'electron';
 export class IpcRendererService {
   private _ipc: IpcRenderer | undefined;
 
-  constructor() {
+  constructor(private _msg: MessagesService) {
     // TODO: fix typings properly??
     const w: any = window;
     if (w.ipcRenderer) {
@@ -17,7 +18,8 @@ export class IpcRendererService {
         throw e;
       }
     } else {
-      console.warn('Electron\'s IPC was not loaded');
+      this._msg.critical('Sorry, a fatal error has occurred. Please restart the app');
+      console.error('Electron\'s IPC was not loaded');
     }
   }
 

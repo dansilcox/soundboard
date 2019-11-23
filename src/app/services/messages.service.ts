@@ -55,9 +55,7 @@ export class MessagesService {
   }
   
   private addMessage(type: MessageType, text: string): void {
-    const msg = new Message();
-    msg.type = type;
-    msg.text = text;
+    const msg = new Message(type, text);
     this.messages.push(msg);
     this.messages$.next(this.messages);
   }

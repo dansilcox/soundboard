@@ -26,6 +26,14 @@ export class AddEditFormComponent implements OnInit {
   handleFileInput(files: FileList): void {
     this.fileToUpload = files.item(0);
     this.sound.file = this.fileToUpload;
+
+    // Default title to name of file (normalised)
+    if (!this.sound.title) {
+      const fileNameNormalised = this.fileToUpload.name.replace('.mp3', '').replace('_', ' ');
+      const firstLetter = fileNameNormalised[0].toLocaleUpperCase();
+      const restOfName = fileNameNormalised.substr(1).toLocaleLowerCase();
+      this.sound.title = firstLetter + restOfName;
+    }
   }
 
   onSubmit(): void {

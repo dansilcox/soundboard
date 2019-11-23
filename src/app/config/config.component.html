@@ -9,7 +9,6 @@
         <tr>
           <th scope="col">Title</th>
           <th scope="col">Text</th>
-          <th scope="col">URL / File</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -17,8 +16,10 @@
         <tr *ngFor="let sound of sounds">
           <td>{{ sound.title }}</td>
           <td>{{ sound.text }} </td>
-          <td>{{ sound.url || sound.file }}</td>
           <td>
+            <a *ngIf="!isPlaying(sound)" href="#" (click)="playSound(sound)">Preview</a>
+            <a *ngIf="isPlaying(sound)" href="#" (click)="stopSound(sound)">Stop</a>
+            <br>
             <a [routerLink]="['/config/edit', sound.id]">Edit</a><br>
             <a href="#" (click)="deleteSound(sound)">Delete</a><br>
           </td>

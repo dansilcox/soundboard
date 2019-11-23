@@ -16,13 +16,19 @@ export class SoundboardDisplayComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sounds$ = this._sounds.getSounds();
+    setTimeout(() => this.sounds$ = this._sounds.getSounds(), 0);
   }
 
   playSound(sound: Sound): void {
-    this._msg.success('Playing sound ' + sound.title);
-
     this._sounds.play(sound);
+  }
+
+  isPlaying(sound: Sound): boolean {
+    return this._sounds.isPlaying(sound);
+  }
+
+  fadeOut(sound: Sound): void {
+    this._sounds.fadeOut(sound);
   }
 
   stopAllAudio(): void {
