@@ -1,0 +1,9 @@
+<h2>Edit a sound</h2>
+
+<div *ngIf="sound else notFound">
+  <app-add-edit-form [sound]="sound"></app-add-edit-form>
+</div>
+
+<ng-template #notFound>
+  <p>Can't find a sound with ID {{ id }}</p>
+</ng-template>

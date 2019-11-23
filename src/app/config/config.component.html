@@ -1,0 +1,35 @@
+<h2>Configure soundboard</h2>
+
+<p><a [routerLink]="[ '/config/new' ]">New sound</a></p>
+
+<div *ngIf="sounds$ | async as sounds else noSounds">
+  <div *ngIf="sounds.length > 0 ">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Text</th>
+          <th scope="col">URL / File</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sound of sounds">
+          <td>{{ sound.title }}</td>
+          <td>{{ sound.text }} </td>
+          <td>{{ sound.url || sound.file }}</td>
+          <td>
+            <a [routerLink]="['/config/edit', sound.id]">Edit</a><br>
+            <a href="#" (click)="deleteSound(sound)">Delete</a><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #noSounds>
+  <p>No sounds yet...</p>
+
+  <p><a [routerLink]="[ '/config/new' ]">Add</a></p>
+</ng-template>

@@ -1,0 +1,26 @@
+<div *ngIf="sounds$ | async as sounds else notFound">
+  <div *ngIf="sounds.length > 0 else notFound">
+    <p class="lead mb-2 mt-2">Click a button to hear its sound!</p>
+
+    <p><button type="button" class="secondary btn-lg btn" (click)="stopAllAudio()">Stop all audio!</button></p>
+
+    <div class="row align-items-start">
+      <div class="col-4" *ngFor="let sound of sounds">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ sound.title }}</h5>
+            <p *ngIf="sound.text" class="card-text">{{ sound.text }}</p>
+            <a (click)="playSound(sound)" class="btn btn-primary">Play {{ sound.title }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #notFound>
+  <h2>No sounds available</h2>
+  <p>Sorry, no sounds available right now.</p>
+
+  <p><a [routerLink]="[ '/config' ]">Configure soundboard</a></p>
+</ng-template>

@@ -1,0 +1,56 @@
+<form (ngSubmit)="onSubmit()" #addSoundForm="ngForm">
+    <div class="row">
+      <div class="form-group col-6">
+        <label for="title">Title</label>
+        <input type="text" required class="form-control" 
+               id="title" 
+               name="title"
+               aria-describedby="titleHelp" 
+               placeholder="Enter title"
+               [(ngModel)]="sound.title">
+        <small id="titleHelp" class="form-text text-muted">Title of the sound</small>
+      </div>
+  
+      <div class="form-group col-6">
+        <label for="soundFile">Sound file</label>
+        <input type="file" required class="form-control-file pb-2" 
+               id="soundFile" 
+               name="soundFile"
+               aria-describedby="soundFileHelp" 
+               placeholder="Upload a sound file"
+               accept="audio/mp4, audio/mpeg, audio/basic, audio/mid, audio/x-mpegurl"
+               (change)="handleFileInput($event.target.files)">
+        <small id="soundFileHelp" class="form-text text-muted">Sound file to upload</small>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="form-group col">
+        <label for="text">Text (optional)</label>
+        <textarea class="form-control" 
+                  id="text" 
+                  name="text"
+                  aria-describedby="textHelp" 
+                  placeholder="Enter text"
+                  [(ngModel)]="sound.text"></textarea>
+        <small id="textHelp" class="form-text text-muted">Longer text description</small>
+      </div>
+
+      <div class="form-group col">
+          <label for="text">URL (optional)</label>
+          <input type="text" class="form-control" 
+                    id="url" 
+                    name="url"
+                    aria-describedby="urlHelp" 
+                    placeholder="Enter URL"
+                    [(ngModel)]="sound.url">
+          <small id="urlHelp" class="form-text text-muted">URL (for remotely stored files)</small>
+        </div>
+    </div>
+  
+    <div class="row">
+      <div class="col">
+        <button type="submit" [disabled]="!addSoundForm.form.valid" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
