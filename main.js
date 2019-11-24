@@ -10,7 +10,7 @@ const db = new sqlite3.Database(__dirname + '/dev.db');
 // IPC handlers
 
 function sendUpdatedSounds(event = null) {
-  db.all('SELECT id, title, text, url, filepath FROM sounds ORDER BY id DESC LIMIT 50', (err, data) => {
+  db.all('SELECT id, title, text, url, filepath, recordOrder FROM sounds ORDER BY recordOrder ASC LIMIT 100', (err, data) => {
     if (err) {
       console.error(err);
     }
@@ -77,6 +77,12 @@ ipcMain.on('deleteSound', (event, sound) => {
   });
 });
 
+ipcMain.on('reorderSound', (event, sound, newPosition) => {
+  const updateSoundStmt = db.prepare('UPDATE sounds SET recordOrder = $1 WHERE id = $2');
+  updateSoundStmt.run(newPosition, sound.id);
+  updateSoundStmt.finalize();
+  sendUpdatedSounds(event);
+});
 
 // Browser window handlers
 

@@ -7,4 +7,5 @@ export class Sound {
   public filepath?: string;
   public fileContents?: string;
   public length?: number;
+  public recordOrder: number = 0;
 }

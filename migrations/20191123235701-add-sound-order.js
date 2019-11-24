@@ -17,7 +17,7 @@ exports.setup = function(options, seedLink) {
 exports.up = function (db) {
   return db.addColumn(
     'sounds',
-    'order',
+    'recordOrder',
     {
       type: 'int',
       notNull: true,
@@ -27,7 +27,7 @@ exports.up = function (db) {
 };
 
 exports.down = function (db) {
-  return db.removeColumn('sounds', 'order');
+  return db.removeColumn('sounds', 'recordOrder');
 };
 
 exports._meta = {

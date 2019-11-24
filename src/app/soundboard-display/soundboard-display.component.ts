@@ -34,4 +34,13 @@ export class SoundboardDisplayComponent implements OnInit {
   stopAllAudio(): void {
     this._sounds.stopAllAudio();
   }
+
+  onItemDrop(event, newPositionSound: Sound, indexOfDropLocation: number): void {
+    // if current index less than drop index we are going down, else going up
+    const direction = event.dragData.index < indexOfDropLocation ?
+      1 :
+      -1; 
+    const increment = 1;
+    this._sounds.reorder(event.dragData.sound, newPositionSound.recordOrder + (direction * increment));
+  }
 }

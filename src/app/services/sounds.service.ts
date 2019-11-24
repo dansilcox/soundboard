@@ -6,6 +6,7 @@ import { Sound } from '../models/sound';
 import { IpcRendererService } from './ipc-renderer.service';
 import { MessagesService } from './messages.service';
 import { AudioWrapper } from '../models/audio-wrapper';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,9 @@ export class SoundsService {
   }
 
   getSounds(): Observable<Sound[]> {
-    return this.sounds$.asObservable();
+    return this.sounds$.asObservable().pipe(
+      map((original) => original.sort((a, b) => a.recordOrder < b.recordOrder ? -1 : 1))
+    );
   }
 
   getById(id: number): Sound {
@@ -70,6 +73,10 @@ export class SoundsService {
   update(sound: Sound): void {
     this.delete(sound);
     this.add(sound);
+  }
+
+  reorder(sound: Sound, newPosition: number): void {
+    this._ipc.send('reorderSound', sound, newPosition);
   }
 
   play(sound: Sound): void {

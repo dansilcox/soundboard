@@ -5,12 +5,16 @@
     <p><button type="button" class="btn-danger btn-lg btn" (click)="stopAllAudio()">Stop all audio!</button></p>
 
     <div class="row align-items-start">
-      <div class="col-4" *ngFor="let sound of sounds">
+      <div class="col-4" *ngFor="let sound of sounds; let i = index" 
+        draggable [dragScope]="'sounds'" [dragData]="{sound:sound,index:i}"
+        droppable (onDrop)="onItemDrop($event, sound, i)" [dropScope]="'sounds'" [dragOverClass]="'drag-target-border'">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ sound.title }}</h5>
+            <p class="card-text">
+              {{ sound.recordOrder }}
+            </p>
             <p *ngIf="sound.text" class="card-text">{{ sound.text }}</p>
-            <p *ngIf="sound.length"><small>{{ sound.length }}</small></p>
             <p><a (click)="playSound(sound)" class="btn btn-primary">Play {{ sound.title }}</a></p>
 
             <p><a *ngIf="isPlaying(sound)" (click)="fadeOut(sound)" class="btn btn-secondary">Fade out</a></p>

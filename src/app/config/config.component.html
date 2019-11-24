@@ -7,6 +7,7 @@
     <table class="table table-striped">
       <thead>
         <tr>
+          <th scope="col">Order</th>
           <th scope="col">Title</th>
           <th scope="col">Text</th>
           <th scope="col">Actions</th>
@@ -14,6 +15,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let sound of sounds">
+          <td>{{ sound.recordOrder }}</td>
           <td>{{ sound.title }}</td>
           <td>{{ sound.text }} </td>
           <td>

@@ -13,6 +13,7 @@ import { MessagesService } from './services/messages.service';
 import { EditComponent } from './config/edit/edit.component';
 import { AddEditFormComponent } from './config/add-edit-form/add-edit-form.component';
 import { IpcRendererService } from './services/ipc-renderer.service';
+import { NgDragDropModule } from 'ng-drag-drop';
 
 @NgModule({
   declarations: [
@@ -24,8 +25,9 @@ import { IpcRendererService } from './services/ipc-renderer.service';
     AddEditFormComponent
   ],
   imports: [
-    FormsModule,
     BrowserModule,
+    NgDragDropModule.forRoot(),
+    FormsModule,
     AppRoutingModule
   ],
   providers: [

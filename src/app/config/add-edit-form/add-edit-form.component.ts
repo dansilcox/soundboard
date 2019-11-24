@@ -29,7 +29,8 @@ export class AddEditFormComponent implements OnInit {
 
     // Default title to name of file (normalised)
     if (!this.sound.title) {
-      const fileNameNormalised = this.fileToUpload.name.replace('.mp3', '').replace('_', ' ');
+      const fileNameNormalised = this.fileToUpload.name
+        .replace('.mp3', '').replace('_', ' ').replace('-', ' ');
       const firstLetter = fileNameNormalised[0].toLocaleUpperCase();
       const restOfName = fileNameNormalised.substr(1).toLocaleLowerCase();
       this.sound.title = firstLetter + restOfName;
