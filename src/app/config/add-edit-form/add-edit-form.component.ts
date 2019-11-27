@@ -29,8 +29,7 @@ export class AddEditFormComponent implements OnInit {
 
     // Default title to name of file (normalised)
     if (!this.sound.title) {
-      const fileNameNormalised = this.fileToUpload.name
-        .replace('.mp3', '').replace('_', ' ').replace('-', ' ');
+      const fileNameNormalised = this.normaliseName(this.fileToUpload.name);
       const firstLetter = fileNameNormalised[0].toLocaleUpperCase();
       const restOfName = fileNameNormalised.substr(1).toLocaleLowerCase();
       this.sound.title = firstLetter + restOfName;
@@ -76,5 +75,12 @@ export class AddEditFormComponent implements OnInit {
       msg += field + ': ' + error + '; ';
     })
     return msg;
+  }
+
+  private normaliseName(name: string): string {
+    return name
+      .split('.mp3').join('')
+      .split('_').join(' ')
+      .split('-').join(' ');
   }
 }

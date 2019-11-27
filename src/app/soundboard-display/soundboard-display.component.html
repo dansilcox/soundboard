@@ -11,13 +11,11 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">{{ sound.title }}</h5>
-            <p class="card-text">
-              {{ sound.recordOrder }}
-            </p>
             <p *ngIf="sound.text" class="card-text">{{ sound.text }}</p>
-            <p><a (click)="playSound(sound)" class="btn btn-primary">Play {{ sound.title }}</a></p>
+            
+            <p><a (click)="playSound(sound)" class="btn-primary btn">Play {{ sound.title }}</a></p>
 
-            <p><a *ngIf="isPlaying(sound)" (click)="fadeOut(sound)" class="btn btn-secondary">Fade out</a></p>
+            <p><a *ngIf="isPlaying(sound)" (click)="fadeOut(sound)" class="btn btn-secondary btn-lg">Fade out</a></p>
           </div>
         </div>
       </div>

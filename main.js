@@ -38,10 +38,13 @@ ipcMain.once('ping', (event) => {
 
 const basepath = __dirname + '/';
 
+// TODO: figure out what is happening with this weird buffer overflow thing where the song ends up repeated :D
 ipcMain.on('addSound', (event, sound) => {
   // strip off the data: url prefix to get just the base64-encoded bytes
   const data = sound.fileContents.replace(/^data:audio\/\w+;base64,/, "");
+  
   const buf = Buffer.alloc(data.length, data, 'base64');
+  
   // Subpath is relative to the filesystem root of the project (needs to match up in frontend + backend)
   const subpath = 'uploads/' + sound.title + '-' + guid() + '.mp3';
   const filepath = basepath + subpath;

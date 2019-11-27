@@ -80,11 +80,43 @@ export class SoundsService {
   }
 
   play(sound: Sound): void {
+    if (this.isPlaying(sound)) {
+      console.log('Sound ' + sound.title + ' already playing');
+      return;
+    }
+
     const audio = new Audio();
     audio.src =  '../' + sound.filepath;
-    audio.load();
+    audio.loop = false;
     audio.play();
     this.audioPlaying.push({id: sound.id, audioElement: audio});
+    
+    audio.onloadedmetadata = (ev) => {
+      console.log('Sound: ' + sound.title + ', duration: ' + audio.duration + ' seconds');
+      
+      setTimeout(() => console.log('END: ' + audio.currentTime), audio.duration * 1000);
+    }
+    audio.onended = (ev) => this.stop(sound);
+  }
+
+  stop(sound: Sound): void {
+    if (!this.isPlaying(sound)) {
+      console.log('Sound ' + sound.title + ' already stopped');
+      return;
+    }
+    
+    const selectedAudio = this.audioPlaying.find((x) => x.id === sound.id);
+    if (!selectedAudio) {
+      console.error('Couldn\'t find playing sound ' + sound.title);
+      return;
+    }
+    
+    selectedAudio.audioElement.pause();
+    selectedAudio.audioElement.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAVFYAAFRWAAABAAgAZGF0YQAAAAA=';
+    selectedAudio.audioElement.currentTime = 0;
+    selectedAudio.audioElement.volume = 0;
+    this.audioPlaying.splice(this.audioPlaying.findIndex((x) => x.id === selectedAudio.id), 1);
+    console.log('Stopped sound ' + sound.title);
   }
 
   isPlaying(sound: Sound): boolean {
