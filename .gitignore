@@ -36,7 +36,8 @@ speed-measure-plugin.json
 
 # misc
 *.env
-/src/environments/*.ts
+/src/environments
+!/src/environments/.keep
 /.sass-cache
 /connect.lock
 /coverage
