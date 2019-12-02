@@ -12,7 +12,6 @@ import { LoginService } from './services/login.service';
 import { MessagesService } from './services/messages.service';
 import { EditComponent } from './config/edit/edit.component';
 import { AddEditFormComponent } from './config/add-edit-form/add-edit-form.component';
-import { IpcRendererService } from './services/ipc-renderer.service';
 import { NgDragDropModule } from 'ng-drag-drop';
 
 @NgModule({
@@ -32,7 +31,6 @@ import { NgDragDropModule } from 'ng-drag-drop';
   ],
   providers: [
     SoundsService,
-    IpcRendererService,
     LoginService,
     MessagesService,
     CanActivateConfigGuard

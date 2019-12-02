@@ -4,7 +4,6 @@ import { map } from 'rxjs/operators';
 import { Message } from './models/message';
 import { MessagesService } from './services/messages.service';
 import { MessageType } from './enums/message-type';
-import { IpcRendererService } from './services/ipc-renderer.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
   messages$: Observable<Message[]>;
   
   private messagesSub: Subscription;
-  constructor(private _msg: MessagesService, private _ipc: IpcRendererService) {
+  constructor(private _msg: MessagesService) {
   }
 
   ngOnInit() {
@@ -32,7 +31,6 @@ export class AppComponent implements OnInit, OnDestroy {
         map((val) => val.slice(0, 5))
       )
       .subscribe();
-    this._ipc.send('ping');
   }
 
   clearMessages() {
