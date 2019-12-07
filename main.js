@@ -1,14 +1,38 @@
 const doc = require('dynamodb-doc');
+// const s3 = require('s3');
 const uuid = require('uuid');
 
 const dynamo = new doc.DynamoDB();
 const tableName = process.env.TABLE_NAME || '';
+const s3BucketArn = process.env.S3_BUCKET_ARN || '';
+
+
+if (tableName === '') {
+  console.error('Missing environment variable TABLE_NAME')
+  throw Error('Missing environment variable TABLE_NAME')
+}
+
+if (s3BucketArn === '') {
+  console.error('Missing environment variable S3_BUCKET_ARN')
+  throw Error('Missing environment variable S3_BUCKET_ARN')
+}
+
+const isEmpty = function(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
 
 exports.handler = (event, context, callback) => {
   // Remove the '-' from the UUID
   const id = uuid().split('-').join('');
-  const parsedBody = JSON.parse(event.body) || {};
-  
+  let parsedBody = {};
+  if (event.httpMethod !== 'GET') {
+    parsedBody = JSON.parse(event.body) || {};
+  }
+  console.log(parsedBody);
   const item = {
     id: id,
     title: parsedBody.title,
@@ -17,6 +41,8 @@ exports.handler = (event, context, callback) => {
   };
   
   const fail = (err, code = '400') => {
+    console.error(err);
+    console.error(code);
     callback(
       null, 
       {
@@ -56,8 +82,8 @@ exports.handler = (event, context, callback) => {
     if (err) {
       return fail(err)
     }
-
-    if (!res || res.length === 0) {
+    
+    if (isEmpty(res)) {
       return notFound()
     }
 
@@ -88,18 +114,22 @@ exports.handler = (event, context, callback) => {
   
   switch (event.httpMethod) {
     case 'DELETE':
+      console.info('DELETE /sounds/' + event.pathParameters.id);
       dynamo.deleteItem(
         {TableName: tableName, Key: {id: event.pathParameters.id}},
         noContent
       );
       break;
     case 'GET':
+      console.info('GET /sounds/' + event.pathParameters.id);
       dynamo.getItem(
         { TableName: tableName, Key: {id: event.pathParameters.id}},
         got
       );
       break;
     case 'POST':
+      console.info('POST /sounds ');
+      console.info(JSON.stringify(item));
       dynamo.putItem(
         {TableName: tableName, Item: item},
         created
