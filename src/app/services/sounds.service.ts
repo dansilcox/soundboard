@@ -1,40 +1,53 @@
 declare var AudioContext, webkitAudioContext: any; // ADDED
 
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Sound } from '../models/sound';
 import { MessagesService } from './messages.service';
 import { AudioWrapper } from '../models/audio-wrapper';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { SoundsApiService } from './sounds-api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SoundsService {
   private sounds: Sound[] = [];
-  private sounds$ = new BehaviorSubject<Sound[]>(this.sounds);
+  private sounds$: Observable<Sound[]>;
 
   private audioPlaying: AudioWrapper[] = [];
 
-  constructor(private _msg: MessagesService) { 
+  constructor(private _msg: MessagesService, private _sounds: SoundsApiService) { 
+    this.sounds$ = this._sounds.getAll();
   }
 
   getSounds(): Observable<Sound[]> {
-    return this.sounds$.asObservable().pipe(
-      map((original) => original.sort((a, b) => a.recordOrder < b.recordOrder ? -1 : 1))
+    return this.sounds$.pipe(
+      map((original: Sound[]) => original), // original.sort((a, b) => a.recordOrder < b.recordOrder ? -1 : 1)),
+      tap((x) => console.log(x)),
+      tap((currentSounds) => this.sounds = currentSounds)
     );
   }
 
-  getById(id: number): Sound {
-    return this.sounds.find((x) => x.id === id);
+  getById(id: string): Sound {
+    let sound = this.sounds.find((x) => x.id === id);
+    if (sound) {
+      return sound;
+    }
+
+    const sub$ = this._sounds.getById(id).subscribe(
+      (s) => {
+        sound = s;
+        this.sounds.push(sound);
+      },
+      (e) => this._msg.error(e)
+    );
+
+    sub$.unsubscribe();
   }
 
   get(sound: Sound): Sound {
-    // TODO: rewrite this UTTER GARBAGE
-    return this.sounds.find((x) => (x.id && sound.id && x.id === sound.id) || 
-      (x.title && sound.title && x.title === sound.title) || 
-      (x.file && sound.file && x.file === sound.file) ||
-      (x.url && sound.url && x.url === sound.url));
+    return this.getById(sound.id);
   }
 
   soundExists(sound: Sound): boolean {
@@ -43,12 +56,12 @@ export class SoundsService {
 
   add(sound: Sound): void {
     this.sounds.push(sound);
-    this.sounds$.next(this.sounds);
-
+    
     const reader = new FileReader();
     reader.readAsDataURL(sound.file);
     reader.onload = () => {
-      sound.fileContents = reader.result.toString();
+      sound.audioUrl = reader.result.toString();
+      this._sounds.create(sound);
     }
 
     reader.onerror = error => {
@@ -58,8 +71,8 @@ export class SoundsService {
   }
 
   delete(sound: Sound): void {
+    this._sounds.delete(sound.id);
     this.sounds.splice(this.sounds.indexOf(sound), 1);
-    this.sounds$.next(this.sounds);
   }
 
   update(sound: Sound): void {

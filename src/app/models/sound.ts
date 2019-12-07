@@ -1,8 +1,8 @@
 export class Sound {
-  public id: number;
+  public id: string;
   public title: string;
   public text?: string;
-  public url?: string;
+  public audioUrl?: string;
   public file?: File;
   public filepath?: string;
   public fileContents?: string;

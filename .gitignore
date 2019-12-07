@@ -10,6 +10,8 @@
 # Only exists if Bazel was run
 /bazel-out
 .env
+/src/environments
+!/src/environments/.keep
 
 # dependencies
 /node_modules

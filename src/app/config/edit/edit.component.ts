@@ -10,11 +10,11 @@ import { Sound } from 'src/app/models/sound';
 })
 export class EditComponent implements OnInit {
   sound: Sound = new Sound();
-  id: number = 0;
+  id: string = '';
   constructor(private _sounds: SoundsService, private _route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.id = +this._route.snapshot.paramMap.get('id');
+    this.id = this._route.snapshot.paramMap.get('id');
 
     this.sound = this._sounds.getById(this.id);
   }

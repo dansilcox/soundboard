@@ -1,4 +1,4 @@
 export class AudioWrapper {
-  public id: number;
+  public id: string;
   public audioElement: HTMLAudioElement;
 }

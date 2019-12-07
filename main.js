@@ -49,6 +49,7 @@ exports.handler = (event, context, callback) => {
         statusCode: code || '400',
         body: err.message,
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
         },
       }
@@ -72,12 +73,31 @@ exports.handler = (event, context, callback) => {
         statusCode: 201,
         body: JSON.stringify(res),
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         }
       }
     )
   }
 
+  const gotCollection = (err, res) => {
+    if (err) {
+      return fail(err)
+    }
+    
+    callback(
+      null,
+      {
+        statusCode: 200,
+        body: JSON.stringify({collection: res.Items || []}),
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  }
+  
   const got = (err, res) => {
     if (err) {
       return fail(err)
@@ -93,6 +113,7 @@ exports.handler = (event, context, callback) => {
         statusCode: 200,
         body: JSON.stringify(res.Item),
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json'
         }
       }
@@ -112,18 +133,30 @@ exports.handler = (event, context, callback) => {
     )
   }
   
+  const idFromRequest = typeof event.pathParameters !== 'undefined' &&
+    event.pathParameters !== null ? 
+      event.pathParameters.id || ''
+      : '';
   switch (event.httpMethod) {
     case 'DELETE':
-      console.info('DELETE /sounds/' + event.pathParameters.id);
+      console.info('DELETE /sounds/' + idFromRequest);
       dynamo.deleteItem(
-        {TableName: tableName, Key: {id: event.pathParameters.id}},
+        {TableName: tableName, Key: {id: idFromRequest}},
         noContent
       );
       break;
     case 'GET':
-      console.info('GET /sounds/' + event.pathParameters.id);
+      if (idFromRequest === '') {
+        console.info('GET /sounds');
+        return dynamo.scan(
+          { TableName: tableName},
+          gotCollection
+        );
+      }
+      
+      console.info('GET /sounds/' + idFromRequest);
       dynamo.getItem(
-        { TableName: tableName, Key: {id: event.pathParameters.id}},
+        { TableName: tableName, Key: {id: idFromRequest}},
         got
       );
       break;
