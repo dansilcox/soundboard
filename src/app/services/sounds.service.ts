@@ -3,7 +3,6 @@ declare var AudioContext, webkitAudioContext: any; // ADDED
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Sound } from '../models/sound';
-import { IpcRendererService } from './ipc-renderer.service';
 import { MessagesService } from './messages.service';
 import { AudioWrapper } from '../models/audio-wrapper';
 import { map } from 'rxjs/operators';
@@ -17,12 +16,7 @@ export class SoundsService {
 
   private audioPlaying: AudioWrapper[] = [];
 
-  constructor(private _ipc: IpcRendererService, private _msg: MessagesService) { 
-    this._ipc.on('pong', () => console.info('Backend connection OK'));
-    this._ipc.on('soundsUpdated', (event, data) => {
-      this.sounds = data;
-      this.sounds$.next(this.sounds);
-    });
+  constructor(private _msg: MessagesService) { 
   }
 
   getSounds(): Observable<Sound[]> {
@@ -55,7 +49,6 @@ export class SoundsService {
     reader.readAsDataURL(sound.file);
     reader.onload = () => {
       sound.fileContents = reader.result.toString();
-      this._ipc.send('addSound', sound);
     }
 
     reader.onerror = error => {
@@ -67,7 +60,6 @@ export class SoundsService {
   delete(sound: Sound): void {
     this.sounds.splice(this.sounds.indexOf(sound), 1);
     this.sounds$.next(this.sounds);
-    this._ipc.send('deleteSound', sound);
   }
 
   update(sound: Sound): void {
@@ -76,7 +68,7 @@ export class SoundsService {
   }
 
   reorder(sound: Sound, newPosition: number): void {
-    this._ipc.send('reorderSound', sound, newPosition);
+
   }
 
   play(sound: Sound): void {
