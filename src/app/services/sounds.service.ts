@@ -20,8 +20,9 @@ export class SoundsService {
   }
 
   getSounds(): Observable<Sound[]> {
-    return this.sounds$.asObservable().pipe(
-      map((original) => original.sort((a, b) => a.recordOrder < b.recordOrder ? -1 : 1))
+    return this.sounds$.pipe(
+      map((original: Sound[]) => original), // original.sort((a, b) => a.recordOrder < b.recordOrder ? -1 : 1)),
+      tap((currentSounds) => this.sounds = currentSounds)
     );
   }
 
@@ -48,7 +49,11 @@ export class SoundsService {
     const reader = new FileReader();
     reader.readAsDataURL(sound.file);
     reader.onload = () => {
-      sound.url = reader.result.toString();
+      console.log('yup');
+      sound.audioUrl = reader.result.toString();
+      const sub$ = this._sounds.create(sound).subscribe(
+        () => sub$.unsubscribe()
+      );
     }
 
     reader.onerror = error => {

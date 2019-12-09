@@ -61,10 +61,10 @@ export class AddEditFormComponent implements OnInit {
       return false;
     }
 
-    if (this._sounds.soundExists(this.sound)) {
-      this.messages.push(['song', 'Must be unique']);
-      return false;
-    }
+    // if (this._sounds.soundExists(this.sound)) {
+    //   this.messages.push(['song', 'Must be unique']);
+    //   return false;
+    // }
 
     return true;
   }
