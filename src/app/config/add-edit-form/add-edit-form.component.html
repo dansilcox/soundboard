@@ -11,7 +11,8 @@
         <small id="titleHelp" class="form-text text-muted">Title of the sound</small>
       </div>
   
-      <div class="form-group col-6">
+      <!-- Only show the file uploader itself for _new_ sounds -->
+      <div *ngIf="!sound.id" class="form-group col-6">
         <label for="soundFile">Sound file</label>
         <input type="file" required class="form-control-file pb-2" 
                id="soundFile" 

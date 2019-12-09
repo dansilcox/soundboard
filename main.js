@@ -41,7 +41,7 @@ const basepath = __dirname + '/';
 // TODO: figure out what is happening with this weird buffer overflow thing where the song ends up repeated :D
 ipcMain.on('addSound', (event, sound) => {
   // strip off the data: url prefix to get just the base64-encoded bytes
-  const data = sound.fileContents.replace(/^data:audio\/\w+;base64,/, "");
+  const data = sound.fileContents.replace(/^data:audio\/\w+;base64,/, '');
   
   const buf = Buffer.alloc(data.length, data, 'base64');
   
@@ -56,6 +56,13 @@ ipcMain.on('addSound', (event, sound) => {
   
     sendUpdatedSounds(event);
   });
+});
+
+ipcMain.on('updateSoundMetadata', (event, sound) => {
+  const stmt = db.prepare("UPDATE sounds SET title = $1, text = $2, url = $3) WHERE id = $4");
+  stmt.run(sound.title, sound.text, sound.url, sound.id);
+  stmt.finalize();
+  sendUpdatedSounds(event);
 });
 
 ipcMain.on('deleteSound', (event, sound) => {

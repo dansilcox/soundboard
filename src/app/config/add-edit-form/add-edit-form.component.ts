@@ -44,7 +44,12 @@ export class AddEditFormComponent implements OnInit {
       return;
     }
     
-    this._sounds.add(this.sound);
+    if (!this.sound.id) {
+      this._sounds.add(this.sound);
+    } else {
+      this._sounds.updateMetadata(this.sound);
+    }
+
     this._router.navigate(['/config']);
   }
 
@@ -61,7 +66,8 @@ export class AddEditFormComponent implements OnInit {
       return false;
     }
 
-    if (this._sounds.soundExists(this.sound)) {
+    // Only check if it exists if it's a new sound being added...
+    if (this.sound.id === null && this._sounds.soundExists(this.sound)) {
       this.messages.push(['song', 'Must be unique']);
       return false;
     }

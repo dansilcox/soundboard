@@ -56,12 +56,32 @@ export class SoundsService {
     reader.onload = () => {
       sound.fileContents = reader.result.toString();
       this._ipc.send('addSound', sound);
+      this._msg.success('Sound ' + sound.title + ' added successfully!');
     }
 
     reader.onerror = error => {
       console.error('Failed to convert File to base64 data URI');
       this._msg.error('Failed to upload file');
     }
+  }
+
+  updateMetadata(sound: Sound): void {
+    if (!sound.id) {
+      this._msg.warning('No ID specified, cannot update...');
+      return;
+    }
+    
+    const foundSound = this.getById(sound.id);
+    if (foundSound === null) {
+      this._msg.warning('No sound found with ID ' + sound.id + ' - cannot update metadata');
+      return;
+    }
+
+    this.sounds.splice(this.sounds.indexOf(sound), 1, sound);
+    this.sounds$.next(this.sounds);
+    
+    this._ipc.send('updateSoundMetadata', sound);
+    this._msg.success('Sound ' + sound.title + ' metadata successfully!');
   }
 
   delete(sound: Sound): void {
